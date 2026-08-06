@@ -1,22 +1,9 @@
-import json
-from langchain_openai import ChatOpenAI
+from app.agents.base import BaseAgent
 
 
-class ProductAgent:
+class ProductAgent(BaseAgent):
     """Product manager - defines MVP scope and technical architecture"""
-    
-    def __init__(self, api_key: str, model_name: str = "openrouter/free"):
-        self.llm = ChatOpenAI(
-            model=model_name,
-            openai_api_key=api_key,
-            openai_api_base="https://openrouter.ai/api/v1",
-            temperature=0.7,
-            default_headers={
-                "HTTP-Referer": "https://github.com/yourusername/day-one",
-                "X-Title": "Day One - AI Startup Validator"
-            }
-        )
-        
+
     async def design_mvp(self, context: dict) -> dict:
         """Design the MVP based on market research"""
         prompt = f"""You are a product manager designing an MVP for a startup.
@@ -38,5 +25,13 @@ Return ONLY valid JSON in this exact format:
     "unique_value_prop": "One clear sentence about differentiation..."
 }}"""
 
-        response = await self.llm.ainvoke(prompt)
-        return json.loads(response.content)
+        fallback = {
+            "mvp_scope": ["Core feature scoping unavailable — using fallback"],
+            "tech_stack": ["Next.js", "FastAPI", "PostgreSQL"],
+            "unique_value_prop": "A focused, faster alternative to existing options."
+        }
+        return await self._call_json(
+            prompt,
+            required_keys={"mvp_scope", "tech_stack", "unique_value_prop"},
+            fallback=fallback
+        )

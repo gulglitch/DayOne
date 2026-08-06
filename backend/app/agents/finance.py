@@ -1,22 +1,12 @@
-import json
-from langchain_openai import ChatOpenAI
+from app.agents.base import BaseAgent
 
 
-class FinanceAgent:
+class FinanceAgent(BaseAgent):
     """CFO - reviews financial viability and challenges unrealistic plans"""
-    
+
     def __init__(self, api_key: str, model_name: str = "openrouter/free"):
-        self.llm = ChatOpenAI(
-            model=model_name,
-            openai_api_key=api_key,
-            openai_api_base="https://openrouter.ai/api/v1",
-            temperature=0.8,  # Higher temp for more critical thinking
-            default_headers={
-                "HTTP-Referer": "https://github.com/yourusername/day-one",
-                "X-Title": "Day One - AI Startup Validator"
-            }
-        )
-        
+        super().__init__(api_key, model_name, temperature=0.8)  # Higher temp for more critical thinking
+
     async def review_financials(self, context: dict) -> dict:
         """Review the product plan from a financial perspective"""
         prompt = f"""You are a skeptical CFO reviewing a startup plan.
@@ -44,5 +34,16 @@ Return ONLY valid JSON in this exact format:
     }}
 }}"""
 
-        response = await self.llm.ainvoke(prompt)
-        return json.loads(response.content)
+        fallback = {
+            "revenue_model": "Freemium with a $19/month paid tier - fallback estimate",
+            "challenge": {
+                "target": "mvp_scope",
+                "reason": "Financial review unavailable — flagging cost risk as a placeholder challenge.",
+                "alternative": "Validate unit economics before building beyond the core feature."
+            }
+        }
+        return await self._call_json(
+            prompt,
+            required_keys={"revenue_model", "challenge.target", "challenge.reason", "challenge.alternative"},
+            fallback=fallback
+        )

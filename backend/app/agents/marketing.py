@@ -1,22 +1,9 @@
-import json
-from langchain_openai import ChatOpenAI
+from app.agents.base import BaseAgent
 
 
-class MarketingAgent:
+class MarketingAgent(BaseAgent):
     """CMO - develops go-to-market strategy and positioning"""
-    
-    def __init__(self, api_key: str, model_name: str = "openrouter/free"):
-        self.llm = ChatOpenAI(
-            model=model_name,
-            openai_api_key=api_key,
-            openai_api_base="https://openrouter.ai/api/v1",
-            temperature=0.7,
-            default_headers={
-                "HTTP-Referer": "https://github.com/yourusername/day-one",
-                "X-Title": "Day One - AI Startup Validator"
-            }
-        )
-        
+
     async def develop_strategy(self, context: dict) -> dict:
         """Develop marketing strategy and positioning"""
         prompt = f"""You are a CMO developing a go-to-market strategy for a startup.
@@ -41,5 +28,13 @@ Return ONLY valid JSON in this exact format:
     "acquisition_approach": "Initial strategy to get first 100 customers"
 }}"""
 
-        response = await self.llm.ainvoke(prompt)
-        return json.loads(response.content)
+        fallback = {
+            "marketing_strategy": "Position as the focused, faster alternative for early adopters.",
+            "target_channels": ["Organic social", "Community forums", "Direct outreach"],
+            "acquisition_approach": "Manual outreach to first 100 users, iterate on feedback."
+        }
+        return await self._call_json(
+            prompt,
+            required_keys={"marketing_strategy", "target_channels", "acquisition_approach"},
+            fallback=fallback
+        )

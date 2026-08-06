@@ -1,22 +1,9 @@
-import json
-from langchain_openai import ChatOpenAI
+from app.agents.base import BaseAgent
 
 
-class ResearchAgent:
+class ResearchAgent(BaseAgent):
     """Market research analyst - analyzes market, competitors, and target audience"""
-    
-    def __init__(self, api_key: str, model_name: str = "openrouter/free"):
-        self.llm = ChatOpenAI(
-            model=model_name,
-            openai_api_key=api_key,
-            openai_api_base="https://openrouter.ai/api/v1",
-            temperature=0.7,
-            default_headers={
-                "HTTP-Referer": "https://github.com/yourusername/day-one",
-                "X-Title": "Day One - AI Startup Validator"
-            }
-        )
-        
+
     async def analyze(self, idea: str) -> dict:
         """Analyze the startup idea and provide market research"""
         prompt = f"""You are a market research analyst for a startup incubator.
@@ -37,5 +24,14 @@ Return ONLY valid JSON in this exact format:
     "market_size": "Medium - justification here"
 }}"""
 
-        response = await self.llm.ainvoke(prompt)
-        return json.loads(response.content)
+        fallback = {
+            "problem_statement": f"Analysis unavailable for \"{idea}\" — using fallback data.",
+            "target_audience": "General early adopters",
+            "competitors": ["Competitor data unavailable"],
+            "market_size": "Medium - fallback estimate"
+        }
+        return await self._call_json(
+            prompt,
+            required_keys={"problem_statement", "target_audience", "competitors", "market_size"},
+            fallback=fallback
+        )

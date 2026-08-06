@@ -1,22 +1,12 @@
-import json
-from langchain_openai import ChatOpenAI
+from app.agents.base import BaseAgent
 
 
-class CEOAgent:
+class CEOAgent(BaseAgent):
     """CEO - makes final decisions and resolves conflicts between departments"""
-    
+
     def __init__(self, api_key: str, model_name: str = "openrouter/free"):
-        self.llm = ChatOpenAI(
-            model=model_name,
-            openai_api_key=api_key,
-            openai_api_base="https://openrouter.ai/api/v1",
-            temperature=0.6,
-            default_headers={
-                "HTTP-Referer": "https://github.com/yourusername/day-one",
-                "X-Title": "Day One - AI Startup Validator"
-            }
-        )
-        
+        super().__init__(api_key, model_name, temperature=0.6)
+
     async def resolve_conflicts(self, context: dict, challenges: list) -> dict:
         """Make final decisions on challenges raised by other agents"""
         
@@ -57,9 +47,25 @@ Return ONLY valid JSON in this exact format:
     "final_directive": "Your 2-3 sentence strategic direction for the team"
 }}"""
 
-        response = await self.llm.ainvoke(prompt)
-        return json.loads(response.content)
-    
+        fallback = {
+            "decisions": [
+                {
+                    "challenge_from": c["agent"],
+                    "decision": "COMPROMISE",
+                    "reasoning": "CEO review unavailable — defaulting to a balanced compromise.",
+                    "action": None
+                }
+                for c in challenges
+            ],
+            "revised_mvp": None,
+            "final_directive": "Proceed with the current plan while monitoring the flagged risks closely."
+        }
+        return await self._call_json(
+            prompt,
+            required_keys={"decisions", "final_directive"},
+            fallback=fallback
+        )
+
     async def generate_pitch(self, context: dict) -> str:
         """Generate final elevator pitch"""
         prompt = f"""Create a compelling 2-sentence elevator pitch for this startup:
@@ -72,6 +78,10 @@ Return ONLY valid JSON in this exact format:
 Make it punchy, investor-ready, and memorable. Focus on the transformation/outcome for customers.
 
 Return ONLY the 2-sentence pitch, nothing else."""
-        
-        response = await self.llm.ainvoke(prompt)
-        return response.content.strip()
+
+        fallback = (
+            f"{context.get('idea', 'This startup')} solves a real problem for "
+            f"{context.get('target_audience', 'its target users')}. "
+            "We're building the fastest path from idea to traction."
+        )
+        return await self._call_text(prompt, fallback=fallback)
