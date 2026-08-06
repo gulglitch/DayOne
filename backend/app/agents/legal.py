@@ -1,22 +1,9 @@
-import json
-from langchain_openai import ChatOpenAI
+from app.agents.base import BaseAgent
 
 
-class LegalAgent:
+class LegalAgent(BaseAgent):
     """Legal counsel - identifies compliance requirements and legal risks"""
-    
-    def __init__(self, api_key: str, model_name: str = "openrouter/free"):
-        self.llm = ChatOpenAI(
-            model=model_name,
-            openai_api_key=api_key,
-            openai_api_base="https://openrouter.ai/api/v1",
-            temperature=0.7,
-            default_headers={
-                "HTTP-Referer": "https://github.com/yourusername/day-one",
-                "X-Title": "Day One - AI Startup Validator"
-            }
-        )
-        
+
     async def review_legal(self, context: dict) -> dict:
         """Review legal and compliance requirements"""
         prompt = f"""You are a startup legal advisor reviewing a business plan.
@@ -44,5 +31,17 @@ Return ONLY valid JSON in this exact format:
     }}
 }}"""
 
-        response = await self.llm.ainvoke(prompt)
-        return json.loads(response.content)
+        fallback = {
+            "legal_structure": "Delaware C-Corp - standard for startups seeking investment",
+            "compliance_requirements": ["Privacy policy", "Terms of service", "Data handling review"],
+            "challenge": {
+                "target": "data_privacy",
+                "reason": "Legal review unavailable — flagging data privacy as a placeholder risk.",
+                "alternative": "Run a compliance review before collecting user data at scale."
+            }
+        }
+        return await self._call_json(
+            prompt,
+            required_keys={"legal_structure", "compliance_requirements", "challenge.target", "challenge.reason", "challenge.alternative"},
+            fallback=fallback
+        )
