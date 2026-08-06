@@ -5,11 +5,11 @@ from langchain_openai import ChatOpenAI
 class ResearchAgent:
     """Market research analyst - analyzes market, competitors, and target audience"""
     
-    def __init__(self, api_key: str, model_name: str = "openrouter/free"):
+    def __init__(self, api_key: str, model_name: str = "gpt-4o-mini"):
         self.llm = ChatOpenAI(
             model=model_name,
             openai_api_key=api_key,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base="https://api.aimlapi.com/v1",
             temperature=0.7,
             default_headers={
                 "HTTP-Referer": "https://github.com/yourusername/day-one",
