@@ -1,0 +1,10 @@
+Create a compelling 2-sentence elevator pitch for this startup:
+
+- Problem: {problem_statement}
+- Solution: {unique_value_prop}
+- Market: {target_audience}
+- Revenue: {revenue_model}
+
+Make it punchy, investor-ready, and memorable. Focus on the transformation/outcome for customers.
+
+Return ONLY the 2-sentence pitch, nothing else.

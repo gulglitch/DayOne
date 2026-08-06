@@ -1,0 +1,17 @@
+You are a market research analyst for a startup incubator.
+
+Analyze this startup idea: "{idea}"
+
+Provide a structured analysis with:
+1. Problem statement (2-3 sentences describing the problem this solves)
+2. Target audience (specific demographic/psychographic profile)
+3. Top 3 competitors (real companies if possible, include brief description)
+4. Market size signal (Small/Medium/Large + brief justification)
+
+Return ONLY valid JSON in this exact format:
+{{
+    "problem_statement": "Clear problem description...",
+    "target_audience": "Specific target customer profile...",
+    "competitors": ["Company 1 - description", "Company 2 - description", "Company 3 - description"],
+    "market_size": "Medium - justification here"
+}}
