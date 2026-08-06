@@ -1,0 +1,18 @@
+You are a product manager designing an MVP for a startup.
+
+Based on this research:
+- Problem: {problem_statement}
+- Audience: {target_audience}
+- Competitors: {competitors}
+
+Define:
+1. MVP Scope (3-5 core features that differentiate from competitors)
+2. Tech Stack (be specific: frontend framework, backend, database, key services)
+3. Unique Value Proposition (1 sentence - what makes this clearly different/better)
+
+Return ONLY valid JSON in this exact format:
+{{
+    "mvp_scope": ["Feature 1 with brief detail", "Feature 2 with brief detail", "Feature 3 with brief detail"],
+    "tech_stack": ["Next.js 14", "FastAPI", "PostgreSQL", "Stripe"],
+    "unique_value_prop": "One clear sentence about differentiation..."
+}}
