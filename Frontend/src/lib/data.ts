@@ -23,16 +23,20 @@ export function agentLabel(id: string): string {
 }
 
 // Backend messages carry an emoji + label prefix baked into the string
-// (e.g. "⚠️ CHALLENGE: ..."). We already render our own tag/stamp for
-// challenge and resolution types, so strip the redundant prefix.
-export function cleanMessage(text: string, type: string): string {
+// (e.g. "⚠️ CHALLENGE: ..."). We render our own badge/stamp for type, so
+// strip both the emoji and any redundant label text.
+export function cleanMessage(text: string, type?: string): string {
+  let cleaned = text.replace(
+    /^[\u2600-\u27BF\u{1F300}-\u{1FAFF}\uFE0F\u200D]+\s*/u,
+    ""
+  );
   if (type === "challenge") {
-    return text.replace(/^\S+\s+(CHALLENGE|LEGAL RISK):\s*/i, "");
+    cleaned = cleaned.replace(/^(CHALLENGE|LEGAL RISK):\s*/i, "");
   }
   if (type === "resolution") {
-    return text.replace(/^\S+\s+DECISIONS MADE:\s*/i, "");
+    cleaned = cleaned.replace(/^DECISIONS MADE:\s*/i, "");
   }
-  return text;
+  return cleaned.trim();
 }
 
 // Marquee credit line — order here is just for display rhythm, not sequence.

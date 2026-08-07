@@ -5,7 +5,8 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useCompanyRun } from "@/hooks/useCompanyRun";
 import LiveMessage from "@/components/LiveMessage";
-import { pipelineAgents } from "@/lib/data";
+import BouncingDots from "@/components/BouncingDots";
+import { pipelineAgents, agentLabel } from "@/lib/data";
 import { API_URL } from "@/lib/api";
 
 export default function CompanyRunPage({
@@ -18,10 +19,10 @@ export default function CompanyRunPage({
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const connectionMeta = {
-    connecting: { label: "Connecting…", color: "var(--color-seal)" },
-    open: { label: "Live", color: "var(--color-stamp-green)" },
-    closed: { label: "Disconnected", color: "var(--color-stamp-red)" },
-    error: { label: "Connection error", color: "var(--color-stamp-red)" },
+    connecting: { label: "Connecting…", color: "var(--color-seal)", glow: false },
+    open: { label: "Live", color: "var(--color-live)", glow: true },
+    closed: { label: "Disconnected", color: "var(--color-stamp-red)", glow: false },
+    error: { label: "Connection error", color: "var(--color-stamp-red)", glow: false },
   }[connection];
 
   useEffect(() => {
@@ -31,6 +32,8 @@ export default function CompanyRunPage({
   const spokenAgents = new Set(messages.map((m) => m.agent));
   const status = result?.status ?? "running";
   const idea = result?.dossier?.idea;
+  const lastSpeaker = [...messages].reverse().find((m) => m.agent !== "system");
+  const isThinking = status === "running";
 
   return (
     <main className="min-h-screen relative pt-28 pb-24">
@@ -45,9 +48,9 @@ export default function CompanyRunPage({
             ← New idea
           </Link>
           <div className="flex items-center gap-4">
-            <span className="mono-label flex items-center gap-2" style={{ color: connectionMeta.color }}>
+            <span className="mono-label flex items-center gap-2 font-medium" style={{ color: connectionMeta.color }}>
               <span
-                className="h-1.5 w-1.5 rounded-full"
+                className={`h-2 w-2 rounded-full ${connectionMeta.glow ? "live-dot" : ""}`}
                 style={{ background: connectionMeta.color }}
                 aria-hidden
               />
@@ -117,13 +120,35 @@ export default function CompanyRunPage({
 
         <div className="mt-10 rounded-[1.4rem] border-2 border-ink bg-paper p-2 sm:p-3">
           <div className="rounded-2xl bg-paper-deep/40 p-6 sm:p-9 min-h-[240px]">
-            {messages.length === 0 ? (
-              <p className="mono-label text-ink-faint text-center py-16 animate-pulse">
+            {messages.length === 0 && (
+              <p className="mono-label text-ink-faint text-center pb-8 pt-4">
                 Opening the office…
               </p>
-            ) : (
-              messages.map((m, i) => <LiveMessage key={i} msg={m} />)
             )}
+
+            {messages.map((m, i) => (
+              <LiveMessage key={i} msg={m} />
+            ))}
+
+            {isThinking && (
+              <div className="flex items-start gap-3 py-2">
+                <div
+                  className="mono-label shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-[0.58rem]"
+                  style={{
+                    background: "var(--color-paper)",
+                    color: "var(--color-ink-faint)",
+                    border: "1.5px solid var(--color-ink-faint)",
+                  }}
+                  aria-hidden
+                >
+                  {lastSpeaker ? agentLabel(lastSpeaker.agent).slice(0, 2).toUpperCase() : "··"}
+                </div>
+                <div className="rounded-2xl rounded-tl-sm px-4 py-3" style={{ background: "var(--color-paper-deep)" }}>
+                  <BouncingDots color="var(--color-ink-faint)" />
+                </div>
+              </div>
+            )}
+
             <div ref={bottomRef} />
           </div>
         </div>

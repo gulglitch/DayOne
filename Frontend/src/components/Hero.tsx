@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { sampleIdeas } from "@/lib/data";
-import { startAnalysis } from "@/lib/api";
+import { startAnalysis, API_URL } from "@/lib/api";
 
 const headlineWords = "Every company starts with an idea.".split(" ");
 
@@ -27,17 +27,26 @@ export default function Hero() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!idea.trim() || submitting) return;
+    if (submitting) return;
+
+    const trimmedIdea = idea.trim();
+    if (!trimmedIdea) {
+      setError("Type your idea in the field above first.");
+      document.getElementById("idea")?.focus();
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
     try {
-      const res = await startAnalysis(idea.trim(), targetMarket.trim());
+      const res = await startAnalysis(trimmedIdea, targetMarket.trim());
       router.push(`/company/${res.session_id}`);
     } catch (err) {
+      console.error("Day One: failed to reach the backend", err);
       setError(
         err instanceof Error
-          ? `${err.message} Is the backend running?`
-          : "Something went wrong reaching the API."
+          ? `${err.message} Is the backend running at ${API_URL}?`
+          : `Something went wrong reaching ${API_URL}.`
       );
       setSubmitting(false);
     }
@@ -112,7 +121,6 @@ export default function Hero() {
               value={idea}
               onChange={(e) => setIdea(e.target.value)}
               autoComplete="off"
-              required
               disabled={submitting}
               className="w-full bg-transparent font-display text-xl sm:text-2xl text-ink placeholder:text-ink-faint/60 outline-none disabled:opacity-60"
               placeholder=" "

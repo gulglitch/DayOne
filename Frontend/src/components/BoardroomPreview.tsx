@@ -15,38 +15,51 @@ export default function BoardroomPreview() {
 
         <Reveal delay={0.15}>
           <div className="mt-14 rounded-[1.4rem] border-2 border-ink bg-paper p-2 sm:p-3">
-            <div className="rounded-2xl bg-paper-deep/40 p-6 sm:p-10 space-y-8">
-              {boardroomTranscript.map((msg, i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-6">
-                  <span className="mono-label text-ink-faint shrink-0 sm:w-44 pt-1">
-                    {msg.agent}
-                  </span>
-
-                  {msg.kind === "resolution" ? (
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                      <Stamp label="Ruling" color="var(--color-stamp-green)" />
-                      <p className="font-display text-lg sm:text-xl text-ink italic">
-                        {msg.text}
-                      </p>
+            <div className="rounded-2xl bg-paper-deep/40 p-6 sm:p-9">
+              {boardroomTranscript.map((msg, i) => {
+                const accent =
+                  msg.kind === "challenge"
+                    ? "var(--color-stamp-red)"
+                    : msg.kind === "resolution"
+                    ? "var(--color-stamp-green)"
+                    : "var(--color-ink-faint)";
+                return (
+                  <div key={i} className="flex items-start gap-3 py-2.5">
+                    <div
+                      className="mono-label shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-[0.58rem]"
+                      style={{ background: "var(--color-paper)", color: accent, border: `1.5px solid ${accent}` }}
+                      aria-hidden
+                    >
+                      {msg.agent.slice(0, 2).toUpperCase()}
                     </div>
-                  ) : msg.kind === "challenge" ? (
-                    <p className="text-ink-soft flex-1">
-                      <span
-                        className="mono-label mr-2 inline-block -rotate-2 px-1.5 py-0.5 rounded"
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="mono-label text-ink-faint text-[0.62rem]">{msg.agent}</span>
+                        {msg.kind === "challenge" && (
+                          <span
+                            className="mono-label text-[0.56rem] px-1.5 py-0.5 rounded"
+                            style={{ color: accent, border: `1px solid ${accent}` }}
+                          >
+                            Objection
+                          </span>
+                        )}
+                        {msg.kind === "resolution" && (
+                          <Stamp label="Ruling" color={accent} compact />
+                        )}
+                      </div>
+                      <div
+                        className="rounded-2xl rounded-tl-sm px-4 py-2.5 text-[0.92rem] leading-relaxed text-ink-soft"
                         style={{
-                          color: "var(--color-stamp-red)",
-                          border: "1.5px solid var(--color-stamp-red)",
+                          background: "var(--color-paper-deep)",
+                          borderLeft: msg.kind !== "post" ? `3px solid ${accent}` : undefined,
                         }}
                       >
-                        Objection
-                      </span>
-                      {msg.text}
-                    </p>
-                  ) : (
-                    <p className="text-ink-soft flex-1">{msg.text}</p>
-                  )}
-                </div>
-              ))}
+                        {msg.text}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </Reveal>

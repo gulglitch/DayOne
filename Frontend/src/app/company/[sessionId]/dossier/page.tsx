@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
+import BouncingDots from "@/components/BouncingDots";
 import { getResult } from "@/lib/api";
 import type { SessionResult } from "@/lib/types";
 
@@ -84,9 +85,10 @@ export default function DossierPage({
   if (!result) {
     return (
       <main className="min-h-screen flex items-center justify-center px-6">
-        <p className="mono-label text-ink-faint animate-pulse">
-          Loading the dossier…
-        </p>
+        <div className="flex flex-col items-center gap-5">
+          <p className="mono-label text-ink-faint">Loading the dossier…</p>
+          <BouncingDots color="var(--color-ink-faint)" />
+        </div>
       </main>
     );
   }
