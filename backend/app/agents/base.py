@@ -21,12 +21,12 @@ class BaseAgent:
     with far fewer moving parts.)
     """
 
-    def __init__(self, api_key: str, model_name: str = "openrouter/free", temperature: float = 0.7):
+    def __init__(self, api_key: str, model_name: str = "gpt-4o-mini", temperature: float = 0.7):
         self.model_name = model_name
         self.temperature = temperature
         self.client = AsyncOpenAI(
             api_key=api_key,
-            base_url="https://openrouter.ai/api/v1",
+            base_url="https://api.aimlapi.com/v1",
             default_headers={
                 "HTTP-Referer": "https://github.com/yourusername/day-one",
                 "X-Title": "Day One - AI Startup Validator"

@@ -27,18 +27,35 @@ export function useCompanyRun(sessionId: string) {
 
   useEffect(() => {
     let cancelled = false;
+    let pollInterval: NodeJS.Timeout | null = null;
+    
+    // Try WebSocket first
     const socket = new WebSocket(wsUrl(sessionId));
     socketRef.current = socket;
 
     socket.onopen = () => {
       if (!cancelled) setConnection("open");
     };
+    
     socket.onerror = () => {
-      if (!cancelled) setConnection("error");
+      if (!cancelled) {
+        setConnection("error");
+        // WebSocket failed, start polling as fallback
+        console.log("WebSocket failed, falling back to polling");
+        startPolling();
+      }
     };
+    
     socket.onclose = () => {
-      if (!cancelled) setConnection((c) => (c === "error" ? c : "closed"));
+      if (!cancelled) {
+        setConnection((c) => (c === "error" ? c : "closed"));
+        // If WebSocket closes unexpectedly, start polling
+        if (!pollInterval) {
+          startPolling();
+        }
+      }
     };
+    
     socket.onmessage = (event) => {
       if (cancelled) return;
       let data: WSEvent;
@@ -59,12 +76,31 @@ export function useCompanyRun(sessionId: string) {
       // {"type": "ping"} events just keep the socket alive — ignored.
     };
 
+    // Polling fallback function
+    const startPolling = () => {
+      if (pollInterval) return; // Already polling
+      
+      pollInterval = setInterval(async () => {
+        const result = await refreshResult();
+        // Stop polling if analysis is complete or errored
+        if (result && (result.status === "completed" || result.status === "error")) {
+          if (pollInterval) {
+            clearInterval(pollInterval);
+            pollInterval = null;
+          }
+        }
+      }, 3000); // Poll every 3 seconds
+    };
+
     // Cover the case where the run already finished before we connected.
     refreshResult();
 
     return () => {
       cancelled = true;
       socket.close();
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
     };
   }, [sessionId, refreshResult]);
 

@@ -8,11 +8,37 @@ import { startAnalysis, API_URL } from "@/lib/api";
 
 const headlineWords = "Every company starts with an idea.".split(" ");
 
+const targetMarkets = [
+  "B2B",
+  "B2C", 
+  "College students",
+  "Small businesses",
+  "Enterprise",
+  "Healthcare providers",
+  "Freelancers",
+  "Parents",
+  "Developers",
+  "Other"
+];
+
+const businessTypes = [
+  "SaaS",
+  "Marketplace",
+  "E-commerce",
+  "Mobile app",
+  "Subscription service",
+  "Platform",
+  "Agency/Service",
+  "Hardware",
+  "Other"
+];
+
 export default function Hero() {
   const router = useRouter();
   const [ideaIndex, setIdeaIndex] = useState(0);
   const [idea, setIdea] = useState("");
   const [targetMarket, setTargetMarket] = useState("");
+  const [businessType, setBusinessType] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
@@ -39,7 +65,9 @@ export default function Hero() {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await startAnalysis(trimmedIdea, targetMarket.trim());
+      // Combine target market and business type into the target_market field
+      const marketInfo = [targetMarket, businessType].filter(Boolean).join(" · ");
+      const res = await startAnalysis(trimmedIdea, marketInfo);
       router.push(`/company/${res.session_id}`);
     } catch (err) {
       console.error("Day One: failed to reach the backend", err);
@@ -143,20 +171,48 @@ export default function Hero() {
             )}
           </div>
 
-          <div className="mt-4">
-            <label htmlFor="targetMarket" className="mono-label text-ink-faint/70 block mb-2 text-[0.65rem]">
-              Article I(a) — Target market, optional
-            </label>
-            <input
-              id="targetMarket"
-              name="targetMarket"
-              value={targetMarket}
-              onChange={(e) => setTargetMarket(e.target.value)}
-              autoComplete="off"
-              disabled={submitting}
-              placeholder="e.g. B2B, college students, small clinics…"
-              className="w-full bg-transparent border-b border-ink-faint/30 pb-2 text-sm text-ink-soft placeholder:text-ink-faint/50 outline-none focus:border-seal transition-colors disabled:opacity-60"
-            />
+          <div className="mt-6 grid sm:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="targetMarket" className="mono-label text-ink-faint/70 block mb-2 text-[0.65rem]">
+                Article I(a) — Target market
+              </label>
+              <select
+                id="targetMarket"
+                name="targetMarket"
+                value={targetMarket}
+                onChange={(e) => setTargetMarket(e.target.value)}
+                disabled={submitting}
+                className="w-full bg-paper border-b border-ink-faint/30 pb-2 text-sm text-ink-soft outline-none focus:border-seal transition-colors disabled:opacity-60 cursor-pointer"
+              >
+                <option value="">Select target market (optional)</option>
+                {targetMarkets.map((market) => (
+                  <option key={market} value={market}>
+                    {market}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="businessType" className="mono-label text-ink-faint/70 block mb-2 text-[0.65rem]">
+                Article I(b) — Business type
+              </label>
+              <select
+                id="businessType"
+                name="businessType"
+                value={businessType}
+                onChange={(e) => setBusinessType(e.target.value)}
+                disabled={submitting}
+                className="w-full bg-paper border-b border-ink-faint/30 pb-2 text-sm text-ink-soft outline-none focus:border-seal transition-colors disabled:opacity-60 cursor-pointer"
+              >
+                <option value="">Select business type (optional)</option>
+                {businessTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-4">
