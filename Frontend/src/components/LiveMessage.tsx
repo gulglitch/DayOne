@@ -12,6 +12,17 @@ const TYPE_ACCENT: Record<string, string> = {
   error: "var(--color-stamp-red)",
 };
 
+// Google-themed colors for each agent
+const AGENT_COLORS: Record<string, string> = {
+  research: "#4285F4",    // Google Blue
+  product: "#EA4335",     // Google Red
+  finance: "#FBBC04",     // Google Yellow
+  legal: "#34A853",       // Google Green
+  marketing: "#FF6D01",   // Google Orange
+  ceo: "#A142F4",         // Google Purple
+  system: "var(--color-ink-faint)",
+};
+
 function initials(label: string) {
   return label.slice(0, 2).toUpperCase();
 }
@@ -31,6 +42,7 @@ export default function LiveMessage({ msg }: { msg: AgentMessage }) {
 
   const accent = TYPE_ACCENT[msg.type] ?? TYPE_ACCENT.info;
   const label = agentLabel(msg.agent);
+  const agentColor = AGENT_COLORS[msg.agent] ?? "var(--color-ink-faint)";
 
   return (
     <motion.div
@@ -40,8 +52,8 @@ export default function LiveMessage({ msg }: { msg: AgentMessage }) {
       className="flex items-start gap-3 py-2"
     >
       <div
-        className="mono-label shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-[0.58rem]"
-        style={{ background: "var(--color-paper)", color: accent, border: `1.5px solid ${accent}` }}
+        className="mono-label shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-[0.58rem] font-semibold"
+        style={{ background: "var(--color-paper)", color: agentColor, border: `1.5px solid ${agentColor}` }}
         aria-hidden
       >
         {initials(label)}
@@ -49,7 +61,7 @@ export default function LiveMessage({ msg }: { msg: AgentMessage }) {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="mono-label text-ink-faint text-[0.62rem]">{label}</span>
+          <span className="mono-label text-[0.62rem] font-semibold" style={{ color: agentColor }}>{label}</span>
           {msg.type === "challenge" && (
             <span
               className="mono-label text-[0.56rem] px-1.5 py-0.5 rounded"
