@@ -1,4 +1,3 @@
-// → src/app/company/[sessionId]/page.tsx
 "use client";
 
 import { use, useEffect, useRef } from "react";
@@ -24,7 +23,7 @@ export default function CompanyRunPage({
     connecting: { label: "Connecting…", color: "var(--color-seal)", glow: false },
     open: { label: "Live", color: "var(--color-live)", glow: true },
     reconnecting: { label: "Reconnecting…", color: "var(--color-seal)", glow: false },
-    failed: { label: "Disconnected", color: "var(--color-stamp-red)", glow: false },
+    polling: { label: "Syncing…", color: "var(--color-seal)", glow: false },
   }[connection];
 
   useEffect(() => {
@@ -80,21 +79,6 @@ export default function CompanyRunPage({
           >
             Can&rsquo;t reach the Day One API at {API_URL}. Make sure the
             backend is running.
-          </div>
-        )}
-
-        {connection === "failed" && status !== "completed" && (
-          <div
-            className="mt-6 rounded-lg border px-4 py-3 mono-label"
-            style={{ borderColor: "var(--color-stamp-red)", color: "var(--color-stamp-red)" }}
-          >
-            Lost the live connection before this run finished. Check the
-            backend&rsquo;s still running (open its terminal — you should see
-            a WebSocket accepted there), then{" "}
-            <button onClick={() => window.location.reload()} className="underline">
-              reload this page
-            </button>
-            .
           </div>
         )}
 
