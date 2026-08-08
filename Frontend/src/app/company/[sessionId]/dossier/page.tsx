@@ -124,16 +124,24 @@ export default function DossierPage({
         <div className="flex items-center justify-between mb-10">
           <Link
             href="/"
-            className="mono-label text-ink-faint hover:text-seal transition-colors"
+            className="mono-label text-ink-faint hover:text-seal transition-colors no-print"
           >
             ← New idea
           </Link>
-          <Link
-            href={`/company/${sessionId}`}
-            className="mono-label text-ink-faint hover:text-seal transition-colors"
-          >
-            View transcript
-          </Link>
+          <div className="flex items-center gap-5">
+            <button
+              onClick={() => window.print()}
+              className="mono-label text-ink-faint hover:text-seal transition-colors no-print"
+            >
+              Export PDF
+            </button>
+            <Link
+              href={`/company/${sessionId}`}
+              className="mono-label text-ink-faint hover:text-seal transition-colors no-print"
+            >
+              View transcript
+            </Link>
+          </div>
         </div>
 
         <p className="mono-label text-seal mb-4">The Dossier</p>
@@ -206,7 +214,7 @@ export default function DossierPage({
           </p>
           <button
             onClick={copyPitch}
-            className="mono-label mt-6 border border-ink px-5 py-2.5 rounded-full hover:bg-ink hover:text-paper transition-colors"
+            className="mono-label mt-6 border border-ink px-5 py-2.5 rounded-full hover:bg-ink hover:text-paper transition-colors no-print"
           >
             {copied ? "Copied ✓" : "Copy pitch"}
           </button>
