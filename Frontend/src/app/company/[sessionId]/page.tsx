@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useCompanyRun } from "@/hooks/useCompanyRun";
 import LiveMessage from "@/components/LiveMessage";
 import BouncingDots from "@/components/BouncingDots";
+import PipelineBlueprint from "@/components/PipelineBlueprint";
 import { pipelineAgents, agentLabel } from "@/lib/data";
 import { API_URL } from "@/lib/api";
 
@@ -21,8 +22,8 @@ export default function CompanyRunPage({
   const connectionMeta = {
     connecting: { label: "Connecting…", color: "var(--color-seal)", glow: false },
     open: { label: "Live", color: "var(--color-live)", glow: true },
-    closed: { label: "Disconnected", color: "var(--color-stamp-red)", glow: false },
-    error: { label: "Connection error", color: "var(--color-stamp-red)", glow: false },
+    reconnecting: { label: "Reconnecting…", color: "var(--color-seal)", glow: false },
+    polling: { label: "Syncing…", color: "var(--color-seal)", glow: false },
   }[connection];
 
   useEffect(() => {
@@ -38,8 +39,9 @@ export default function CompanyRunPage({
   return (
     <main className="min-h-screen relative pt-28 pb-24">
       <div className="ledger-grid" aria-hidden />
+      <PipelineBlueprint />
 
-      <div className="relative max-w-3xl mx-auto px-6">
+      <div className="relative max-w-3xl mx-auto px-6 z-10">
         <div className="flex items-center justify-between mb-8">
           <Link
             href="/"
@@ -77,21 +79,6 @@ export default function CompanyRunPage({
           >
             Can&rsquo;t reach the Day One API at {API_URL}. Make sure the
             backend is running.
-          </div>
-        )}
-
-        {(connection === "closed" || connection === "error") && status !== "completed" && (
-          <div
-            className="mt-6 rounded-lg border px-4 py-3 mono-label"
-            style={{ borderColor: "var(--color-stamp-red)", color: "var(--color-stamp-red)" }}
-          >
-            Lost the live connection before this run finished. Check the
-            backend&rsquo;s still running (open its terminal — you should see
-            a WebSocket accepted there), then{" "}
-            <button onClick={() => window.location.reload()} className="underline">
-              reload this page
-            </button>
-            .
           </div>
         )}
 
