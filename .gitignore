@@ -7,6 +7,10 @@ Frontend/dist/
 # Environment files
 Frontend/.env
 Frontend/.env.*
+backend/.env
+.env
+.env.*
+.env.docker
 
 # IDE
 Frontend/.vscode/

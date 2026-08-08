@@ -175,9 +175,9 @@ async def run_pipeline(session_id: str, idea: str):
     
     try:
         # Get API key from environment
-        api_key = os.getenv("OPENROUTER_API_KEY")
+        api_key = os.getenv("AIMLAPI_KEY")
         if not api_key:
-            raise ValueError("OPENROUTER_API_KEY not set in environment")
+            raise ValueError("AIMLAPI_KEY not set in environment")
         
         # Get model name (default to free router)
         model_name = os.getenv("MODEL_NAME", "openrouter/free")

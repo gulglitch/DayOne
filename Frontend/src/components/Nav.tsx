@@ -51,12 +51,18 @@ export default function Nav() {
             </svg>
             GitHub
           </a>
-          <a
-            href="#start"
-            className="mono-label border border-ink px-4 py-2 rounded-full hover:bg-ink hover:text-paper transition-colors"
+          <button
+            onClick={() => {
+              const input = document.getElementById('idea');
+              if (input) {
+                input.focus();
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }}
+            className="mono-label border border-ink bg-ink text-paper px-4 py-2 rounded-full hover:opacity-90 transition-opacity cursor-pointer"
           >
             Start a company
-          </a>
+          </button>
         </div>
       </nav>
     </motion.header>

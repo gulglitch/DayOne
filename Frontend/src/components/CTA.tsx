@@ -1,3 +1,5 @@
+"use client";
+
 import Reveal from "./Reveal";
 
 export default function CTA() {
@@ -12,12 +14,18 @@ export default function CTA() {
               The best ones survive an argument first.
             </span>
           </h2>
-          <a
-            href="#start"
-            className="mono-label inline-block mt-10 bg-ink text-paper px-8 py-4 rounded-full hover:bg-seal transition-colors"
+          <button
+            onClick={() => {
+              const input = document.getElementById('idea');
+              if (input) {
+                input.focus();
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+            }}
+            className="mono-label inline-block mt-10 bg-ink text-paper px-8 py-4 rounded-full hover:bg-seal transition-colors cursor-pointer"
           >
             Start the meeting →
-          </a>
+          </button>
         </Reveal>
       </div>
     </section>
