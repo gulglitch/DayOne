@@ -25,3 +25,6 @@ pnpm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Kiro AI internal files
+.kiro/

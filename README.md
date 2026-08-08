@@ -278,7 +278,7 @@ The frontend is built with **native.builder** and connects to the backend via:
 - REST API for starting analysis and fetching results
 - WebSocket for real-time agent message streaming
 
-See [`.kiro/steering/integration.md`](.kiro/steering/integration.md) for complete integration guide.
+For detailed integration instructions, see the [backend API documentation](https://dayone-sxkq.onrender.com/docs).
 
 ### Docker Setup (Optional)
 
@@ -365,7 +365,7 @@ GET /api/result/{session_id}
 ```
 
 **📖 Complete API Documentation:**  
-See [`.kiro/steering/api-reference.md`](.kiro/steering/api-reference.md) for full TypeScript types, error handling, and integration examples.
+See the interactive [Swagger API Docs](https://dayone-sxkq.onrender.com/docs) for full TypeScript types, error handling, and integration examples.
 
 ---
 
@@ -423,14 +423,6 @@ DayOne/
 ├── docs/
 │   ├── Day_One_PRD.pdf          # Original Product Requirements
 │   └── SIMPLIFIED_BACKEND_PLAN.md  # Implementation strategy
-├── .kiro/
-│   └── steering/                # Integration documentation
-│       ├── api-reference.md     # Complete API docs
-│       ├── integration.md       # Frontend integration guide
-│       ├── demo.md              # Demo video guidelines
-│       ├── submission.md        # Hackathon checklist
-│       ├── product.md           # Product overview
-│       └── tech.md              # Technical stack details
 ├── docker-compose.yml           # Multi-container setup
 └── README.md                    # This file
 ```
@@ -451,7 +443,7 @@ DayOne/
 - ✅ **API Documentation:** [https://dayone-sxkq.onrender.com/docs](https://dayone-sxkq.onrender.com/docs)
 - 🚧 **Demo Video:** (3-minute end-to-end workflow) - *In Production*
 - ✅ **Source Code:** This repository
-- ✅ **Documentation:** Complete integration guides in `.kiro/steering/`
+- ✅ **Documentation:** Complete setup guides in `backend/` directory
 
 ### What Makes Day One Special
 
@@ -476,19 +468,13 @@ DayOne/
 
 ### For Developers
 
-- **[API Reference](.kiro/steering/api-reference.md)** - Complete endpoint documentation, TypeScript types, error handling
-- **[Integration Guide](.kiro/steering/integration.md)** - How to connect native.builder frontend to FastAPI backend
-- **[Tech Stack Details](.kiro/steering/tech.md)** - Architecture patterns, dependencies, common commands
-
-### For Hackathon Judges
-
-- **[Product Overview](.kiro/steering/product.md)** - Value proposition, features, target users
-- **[Demo Guidelines](.kiro/steering/demo.md)** - How to record effective demo video
-- **[Submission Checklist](.kiro/steering/submission.md)** - Hackathon requirements compliance
+- **[Interactive API Docs](https://dayone-sxkq.onrender.com/docs)** - Complete endpoint documentation with live testing
+- **[Backend Setup Guide](backend/SETUP.md)** - How to run the backend locally
+- **[Get API Key Guide](backend/GET_API_KEY.md)** - Instructions for obtaining AI/ML API credentials
+- **[Backend README](backend/README.md)** - Backend-specific documentation
 
 ### Implementation Resources
 
-- **[Backend Implementation Plan](docs/SIMPLIFIED_BACKEND_PLAN.md)** - Agent design and pipeline architecture
 - **[Original PRD](docs/Day_One_PRD.pdf)** - Initial product requirements document
 
 ---
