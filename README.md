@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚀 Day One - AI Startup Validator
+# Day One - AI Startup Validator
 
 ### Transform Rough Ideas into Validated Company Plans Through Adversarial AI Collaboration
 
